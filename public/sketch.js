@@ -68,4 +68,12 @@ function draw() {
 			i * colw,  // draw above the rectangles
 			y - 5);    // add some padding
 	}
+
+	/* Visualize amplitude using a circle centered in the canvas. */
+	let scaling = 500;
+	let vol = amp.getLevel() * scaling;
+	let centerxy = [width / 2, height / 2];
+	ellipse(centerxy[0], centerxy[1], vol, vol);
+	text(vol, centerxy[0], centerxy[1]);
+	text("(Upscaled by: " + scaling + ")", centerxy[0], centerxy[1] + 10);
 }
