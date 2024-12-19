@@ -1,10 +1,11 @@
 "use strict"
 
+let __debug__ = false;
 let amp;
 let snd;
 let fft;
-let toggleBtn;
 let input;
+let toggleDbgBtn;
 
 /***************************
  * Custom/helper functions *
@@ -35,12 +36,16 @@ function preload() {
 }
 
 function setup() {
-	createCanvas(800, 600);
-
-	toggleBtn = createButton("Play/Pause");
-	toggleBtn.position(0, 0);
-	toggleBtn.mousePressed(() => {
+	let cnv = createCanvas(800, 600);
+	cnv.mousePressed(() => {
 		snd.isPlaying() ? snd.pause() : snd.play();
+	});
+
+	toggleDbgBtn = createButton("Toggle debug");
+	toggleDbgBtn.position(0, 0);
+	toggleDbgBtn.mousePressed(() => {
+		__debug__ = !__debug__;
+		// console.log("Debug mode: ", __debug__ ? 1 : 0);
 	});
 
 	// input = createFileInput(uploadAudioFile);
@@ -64,9 +69,11 @@ function draw() {
 	for (let i = 0; i < fspec.length; ++i) {
 		let y = map(fspec[i], 0, 255, height, height / 4);
 		rect(i * colw, y, colw, height);
-		text(i + 1,  // don't start at 0
-			i * colw,  // draw above the rectangles
-			y - 5);    // add some padding
+		if (__debug__) {
+			text(i + 1,	// don't start at 0
+				i * colw,	// draw above the rectangles
+				y - 5);		// add some padding
+		}
 	}
 
 	/* Visualize amplitude using a circle centered in the canvas. */
@@ -74,6 +81,8 @@ function draw() {
 	let vol = amp.getLevel() * scaling;
 	let centerxy = [width / 2, height / 2];
 	ellipse(centerxy[0], centerxy[1], vol, vol);
-	text(vol, centerxy[0], centerxy[1]);
-	text("(Upscaled by: " + scaling + ")", centerxy[0], centerxy[1] + 10);
+	if (__debug__) {
+		text(vol, centerxy[0], centerxy[1]);
+		text("(Upscaled by: " + scaling + ")", centerxy[0], centerxy[1] + 10);
+	}
 }
