@@ -51,8 +51,21 @@ function setup() {
 
 	fft = new p5.FFT(.8, 32);  // TODO: don't hardcode smoothing and size
 	fft.setInput(snd);
+
+	snd.setVolume(.5);
 }
 
 function draw() {
 	background(220);
+
+	/* Visualize frequency spectrum using horizontal rectangular bars. */
+	let fspec = fft.analyze();
+	let colw = width / 32;  // NOTE: 32 is the fft size
+	for (let i = 0; i < fspec.length; ++i) {
+		let y = map(fspec[i], 0, 255, height, height / 4);
+		rect(i * colw, y, colw, height);
+		text(i + 1,  // don't start at 0
+			i * colw,  // draw above the rectangles
+			y - 5);    // add some padding
+	}
 }
