@@ -1,3 +1,4 @@
 # For obvious reasons...
 node_modules/
-package-lock.json
+
+*.old
