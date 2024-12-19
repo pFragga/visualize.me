@@ -4,10 +4,20 @@ let amp;
 let snd;
 let fft;
 let toggleBtn;
+let input;
 
 /***************************
  * Custom/helper functions *
  ***************************/
+
+function uploadAudioFile(f) {  // FIXME
+	if (f.type !== "audio") {
+		console.log(`Error loading '${f.name}': is not an audio file.`);
+		return;
+	}
+	snd.stop();
+	snd = loadSound(f.name);
+}
 
 function getDebugInfo() {
 	console.log("Freq specturm:\t", fft.analyze(),
@@ -32,6 +42,9 @@ function setup() {
 	toggleBtn.mousePressed(() => {
 		snd.isPlaying() ? snd.pause() : snd.play();
 	});
+
+	// input = createFileInput(uploadAudioFile);
+	// input.position(0, toggleBtn.height);
 
 	amp = new p5.Amplitude();
 	amp.setInput(snd);
