@@ -53,6 +53,7 @@ function setup() {
 
 	amp = new p5.Amplitude();
 	amp.setInput(snd);
+	amp.toggleNormalize();
 
 	fft = new p5.FFT(.8, 32);  // TODO: don't hardcode smoothing and size
 	fft.setInput(snd);
@@ -78,11 +79,9 @@ function draw() {
 
 	/* Visualize amplitude using a circle centered in the canvas. */
 	let scaling = 500;
-	let vol = amp.getLevel() * scaling;
+	let vol = map(amp.getLevel(), 0, 1, 0, scaling);
 	let centerxy = [width / 2, height / 2];
 	ellipse(centerxy[0], centerxy[1], vol, vol);
-	if (__debug__) {
-		text(vol, centerxy[0], centerxy[1]);
-		text("(Upscaled by: " + scaling + ")", centerxy[0], centerxy[1] + 10);
-	}
+	if (__debug__)
+		text(vol + "\n[x" + scaling + "]", centerxy[0], centerxy[1]);
 }
