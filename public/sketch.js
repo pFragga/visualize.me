@@ -84,4 +84,14 @@ function draw() {
 	ellipse(centerxy[0], centerxy[1], vol, vol);
 	if (__debug__)
 		text(vol + "\n[x" + scaling + "]", centerxy[0], centerxy[1]);
+
+	/* TODO: Visualize sample values as a graph? */
+	let wav = fft.waveform();
+	strokeWeight(3);
+	for (let i = 0; i < wav.length; ++i){
+		let x = map(i, 0, wav.length, 0, width);
+		let y = map(wav[i], -1, 1, 0, height);
+		point(x, y);
+	}
+	strokeWeight(1);
 }
