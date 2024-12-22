@@ -6,6 +6,8 @@ let snd;
 let fft;
 let input;
 let toggleDbgBtn;
+let cycleVisBtn;
+let currVis = 0;
 
 /***************************
  * Custom/helper functions *
@@ -48,6 +50,13 @@ function setup() {
 		// console.log("Debug mode: ", __debug__ ? 1 : 0);
 	});
 
+	cycleVisBtn = createButton("Cycle Visualizer");
+	cycleVisBtn.position(width - cycleVisBtn.width, 0);
+	cycleVisBtn.mousePressed(() => {
+		currVis = ++currVis % 3;  // Modulo the number of methods we have
+		// console.log("Current visualizer:\t" + currVis);
+	});
+
 	// input = createFileInput(uploadAudioFile);
 	// input.position(0, toggleBtn.height);
 
@@ -64,34 +73,42 @@ function setup() {
 function draw() {
 	background(220);
 
-	/* Visualize frequency spectrum using horizontal rectangular bars. */
-	let fspec = fft.analyze();
-	let colw = width / 32;  // NOTE: 32 is the fft size
-	for (let i = 0; i < fspec.length; ++i) {
-		let y = map(fspec[i], 0, 255, height, height / 4);
-		rect(i * colw, y, colw, height);
-		if (__debug__) {
-			text(i + 1,	// don't start at 0
-				i * colw,	// draw above the rectangles
-				y - 5);		// add some padding
+	switch (currVis) {
+	case 1:
+		/* Visualize frequency spectrum using horizontal rectangular bars. */
+		let fspec = fft.analyze();
+		let colw = width / 32;  // NOTE: 32 is the fft size
+		for (let i = 0; i < fspec.length; ++i) {
+			let y = map(fspec[i], 0, 255, height, height / 4);
+			rect(i * colw, y, colw, height);
+			if (__debug__) {
+				text(i + 1,	// don't start at 0
+					i * colw,	// draw above the rectangles
+					y - 5);		// add some padding
+			}
 		}
-	}
+		break;
 
-	/* Visualize amplitude using a circle centered in the canvas. */
-	let scaling = 500;
-	let vol = map(amp.getLevel(), 0, 1, 0, scaling);
-	let centerxy = [width / 2, height / 2];
-	ellipse(centerxy[0], centerxy[1], vol, vol);
-	if (__debug__)
-		text(vol + "\n[x" + scaling + "]", centerxy[0], centerxy[1]);
+	case 2:
+		/* Visualize amplitude using a circle centered in the canvas. */
+		let scaling = 500;
+		let vol = map(amp.getLevel(), 0, 1, 0, scaling);
+		let centerxy = [width / 2, height / 2];
+		ellipse(centerxy[0], centerxy[1], vol, vol);
+		if (__debug__)
+			text(vol + "\n[x" + scaling + "]", centerxy[0], centerxy[1]);
+		break;
 
-	/* TODO: Visualize sample values as a graph? */
-	let wav = fft.waveform();
-	strokeWeight(3);
-	for (let i = 0; i < wav.length; ++i){
-		let x = map(i, 0, wav.length, 0, width);
-		let y = map(wav[i], -1, 1, 0, height);
-		point(x, y);
+	default:
+		/* TODO: Visualize sample values as a graph? */
+		let wav = fft.waveform();
+		strokeWeight(3);
+		for (let i = 0; i < wav.length; ++i){
+			let x = map(i, 0, wav.length, 0, width);
+			let y = map(wav[i], -1, 1, 0, height);
+			point(x, y);
+		}
+		strokeWeight(1);
+		break;
 	}
-	strokeWeight(1);
 }
