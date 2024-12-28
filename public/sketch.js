@@ -100,14 +100,18 @@ function draw() {
 		break;
 
 	default:
-		/* TODO: Visualize sample values as a graph? */
+		/* Linear interpolation on sample values. */
 		let wav = fft.waveform();
 		strokeWeight(3);
+		noFill();  // Don't fill the area under the curve
+		beginShape();
 		for (let i = 0; i < wav.length; ++i){
 			let x = map(i, 0, wav.length, 0, width);
 			let y = map(wav[i], -1, 1, 0, height);
-			point(x, y);
+			curveVertex(x, y);
 		}
+		endShape();
+		fill(255, 255);  // FIXME: This messes up text in debug mode
 		strokeWeight(1);
 		break;
 	}
