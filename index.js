@@ -35,5 +35,5 @@ app.post("/uploads", upload.single("custom_audio"), (req, res, next) => {
 // Start listening for connections
 app.listen(port, () => {
 	let date = new Date();
-	console.log(`${date.toLocaleTimeString("el-gr")}>\tServing on port ${port}...`);
+	console.log(`${date.toLocaleString()}>\tServing on port ${port}...`);
 });
