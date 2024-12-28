@@ -4,23 +4,16 @@ let __debug__ = false;
 let amp;
 let snd;
 let fft;
-let input;
 let toggleDbgBtn;
 let cycleVisBtn;
 let currVis = 0;
+let fileInput;
+let submitButton;
+let sndFilename = "assets/songs/level-vii-short-258782.mp3";
 
 /***************************
  * Custom/helper functions *
  ***************************/
-
-function uploadAudioFile(f) {  // FIXME
-	if (f.type !== "audio") {
-		console.log(`Error loading '${f.name}': is not an audio file.`);
-		return;
-	}
-	snd.stop();
-	snd = loadSound(f.name);
-}
 
 function getDebugInfo() {
 	console.log("Freq specturm:\t", fft.analyze(),
@@ -29,12 +22,52 @@ function getDebugInfo() {
 	);
 }
 
+async function reloadSnd(filename) {
+	if (snd.isPlaying)
+		snd.stop();
+
+	// This is so fucking broken, but at least it works!!
+	snd = loadSound("assets/uploads/" + filename, () => {
+		console.log("Reloaded audio!");
+		amp.setInput(snd);
+		fft.setInput(snd);
+	});
+}
+
+async function submitForm() {
+	let file = fileInput.elt.files[0];
+
+	// Bail out, if we didn't select an audio file
+	// TODO: Indicate the issue with a text prompt or something...
+	if (!file.type.match("^audio/\\w\+$"))
+		return;
+
+	let formData = new FormData();
+	formData.append("custom_audio", fileInput.elt.files[0]);
+
+	await fetch("/uploads", {
+		method: "POST",
+		body: formData
+	})
+	.then(async (res) => {
+		let resData = await res.json();
+		if (res.ok) {
+			console.log(resData.msg);
+
+			// Immediately try to change the audio that's currently playing
+			reloadSnd(resData.filename)
+		} else {
+			console.error(resData.msg);
+		}
+	});
+}
+
 /*****************************
  * Overriden p5.js functions *
  *****************************/
 
 function preload() {
-	snd = loadSound("assets/songs/level-vii-short-258782.mp3");
+	snd = loadSound(sndFilename);
 }
 
 function setup() {
@@ -57,9 +90,6 @@ function setup() {
 		// console.log("Current visualizer:\t" + currVis);
 	});
 
-	// input = createFileInput(uploadAudioFile);
-	// input.position(0, toggleBtn.height);
-
 	amp = new p5.Amplitude();
 	amp.setInput(snd);
 	amp.toggleNormalize();
@@ -68,6 +98,26 @@ function setup() {
 	fft.setInput(snd);
 
 	snd.setVolume(.5);
+
+	// Create the form elements for uploading audio files
+	let form = createDiv();
+	fileInput = createFileInput((file) => {
+		if (file.type !== "audio")
+			console.error("Wrong file type: must choose an audio file!");
+	});
+	fileInput.attribute("name", "custom_audio");
+	submitButton = createButton("Submit");
+	submitButton.attribute("type", "submit");
+	submitButton.mousePressed(submitForm);
+
+	// Append the form elements to the form div
+	form.child(fileInput);
+	form.child(submitButton);
+
+	// Set the form attributes
+	form.attribute("action", "/uploads");
+	form.attribute("method", "post");
+	form.attribute("enctype", "multipart/form-data");
 }
 
 function draw() {
