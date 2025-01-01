@@ -5,10 +5,17 @@ const port = 6969;
 
 // Set up Multer and configure to store uploaded stuff in ./public/assets/uploads
 const multer = require("multer");
-const upload = multer({
-	dest: "public/assets/uploads",
-	// TODO: Configure filename
+const diskStorage = multer.diskStorage({
+	destination: (req, file, callback) => {
+		callback(null, "public/assets/uploads");
+	},
+	filename: (req, file, callback) => {
+		// Took this from: https://www.npmjs.com/package/multer#diskstorage
+		let prefix = Date.now() + "_" + Math.round(Math.random() * 1e9);
+		callback(null, `${prefix}-${file.originalname}`);
+	}
 });
+const upload = multer({ storage: diskStorage });
 
 // Middleware:
 // 1. Serve static content from ./public (use it as content root aka /)
