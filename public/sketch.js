@@ -28,7 +28,7 @@ async function reloadSnd(filename) {
 
 	// This is so fucking broken, but at least it works!!
 	snd = loadSound("assets/uploads/" + filename, () => {
-		console.log("Reloaded audio!");
+		alert("Reloaded audio!");
 		amp.setInput(snd);
 		fft.setInput(snd);
 	});
@@ -38,9 +38,10 @@ async function submitForm() {
 	let file = fileInput.elt.files[0];
 
 	// Bail out, if we didn't select an audio file
-	// TODO: Indicate the issue with a text prompt or something...
-	if (!file.type.match("^audio/\\w\+$"))
+	if (!file.type.match("^audio/\\w\+$")) {
+		alert("Wrong file type: must choose an audio file!");
 		return;
+	}
 
 	let formData = new FormData();
 	formData.append("custom_audio", fileInput.elt.files[0]);
