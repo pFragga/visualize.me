@@ -1,6 +1,8 @@
 "use strict"
 
-let __debug__ = false;
+const fftSmooth = .8;  // Smoothing applied to frequency specturm
+const fftSz     = 32;  // "bins": The length of resulting array
+let __debug__   = false;
 let amp;
 let snd;
 let fft;
@@ -95,7 +97,7 @@ function setup() {
 	amp.setInput(snd);
 	amp.toggleNormalize();
 
-	fft = new p5.FFT(.8, 32);  // TODO: don't hardcode smoothing and size
+	fft = new p5.FFT(fftSmooth, fftSz);
 	fft.setInput(snd);
 
 	snd.setVolume(.5);
@@ -128,7 +130,7 @@ function draw() {
 	case 1:
 		/* Visualize frequency spectrum using horizontal rectangular bars. */
 		let fspec = fft.analyze();
-		let colw = width / 32;  // NOTE: 32 is the fft size
+		let colw = width / fftSz;
 		for (let i = 0; i < fspec.length; ++i) {
 			let y = map(fspec[i], 0, 255, height, height / 4);
 			rect(i * colw, y, colw, height);
