@@ -34,7 +34,7 @@ app.post("/uploads", upload.single("custom_audio"), (req, res, next) => {
 	console.log(req.file, "\n", req.body);
 
 	res.status(200).send(JSON.stringify({
-		msg: "Uploaded file successfully!",
+		msg: `Uploaded file '${req.file.originalname}' successfully!`,
 		filename: req.file.filename
 	}));
 });
