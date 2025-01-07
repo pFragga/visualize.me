@@ -2,13 +2,13 @@
 
 const fftSmooth = .8;  // Smoothing applied to frequency specturm
 const fftSz     = 32;  // "bins": The length of resulting array
-let __debug__   = false;
+let __debug__;
 let amp;
 let snd;
 let fft;
 let toggleDbgBtn;
 let cycleVisBtn;
-let currVis = 0;
+let currVis;
 let fileInput;
 let submitButton;
 let sndFilename = "assets/songs/level-vii-short-258782.mp3";
@@ -36,6 +36,7 @@ async function reloadSnd(filename) {
 	});
 }
 
+// TODO: Possible refactor inside createFileInput's callback
 async function submitForm() {
 	let file = fileInput.elt.files[0];
 
@@ -48,6 +49,7 @@ async function submitForm() {
 	let formData = new FormData();
 	formData.append("custom_audio", fileInput.elt.files[0]);
 
+	// Send the formData in a POST request to multer at /uploads
 	await fetch("/uploads", {
 		method: "POST",
 		body: formData
@@ -93,6 +95,7 @@ function setup() {
 		__debug__ = !__debug__;
 		// console.log("Debug mode: ", __debug__ ? 1 : 0);
 	});
+	__debug__ = true;  // NOTE: Turn this off in release version
 
 	cycleVisBtn = createButton("Cycle Visualizer");
 	cycleVisBtn.position(width - cycleVisBtn.width, 0);
@@ -100,6 +103,7 @@ function setup() {
 		currVis = ++currVis % 3;  // Modulo the number of methods we have
 		// console.log("Current visualizer:\t" + currVis);
 	});
+	currVis = 0;
 
 	amp = new p5.Amplitude();
 	amp.setInput(snd);
@@ -137,6 +141,8 @@ function setup() {
 
 function draw() {
 	background(220);
+
+	// TODO: Display WHAT we are visualizing each time
 
 	switch (currVis) {
 	case 1:
