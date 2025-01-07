@@ -69,12 +69,20 @@ async function submitForm() {
  * Overriden p5.js functions *
  *****************************/
 
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
+	toggleDbgBtn.position(0, 0);
+	cycleVisBtn.position(width - cycleVisBtn.width, 0);
+	submitButton.position(fileInput.width + 128, 0);
+	fileInput.position(toggleDbgBtn.width, 0);
+}
+
 function preload() {
 	snd = loadSound(sndFilename);
 }
 
 function setup() {
-	let cnv = createCanvas(800, 600);
+	let cnv = createCanvas(windowWidth, windowHeight);
 	cnv.mousePressed(() => {
 		snd.isPlaying() ? snd.pause() : snd.play();
 	});
@@ -121,6 +129,10 @@ function setup() {
 	form.attribute("action", "/uploads");
 	form.attribute("method", "post");
 	form.attribute("enctype", "multipart/form-data");
+
+	// Position form elements correctly (padded to the right of debug toggle)
+	submitButton.position(fileInput.width + 128, 0);
+	fileInput.position(toggleDbgBtn.width, 0);
 }
 
 function draw() {
