@@ -45,18 +45,15 @@ async function reloadSnd(assetDir, filename) {
 	});
 }
 
-// TODO: Possible refactor inside createFileInput's callback
-async function submitForm() {
-	let file = fileInput.elt.files[0];
-
-	// Bail out, if we didn't select an audio file
-	if (!file.type.match("^audio/\\w\+$")) {
+async function submitForm(file) {
+	if (file.type !== "audio") {
 		alert("Wrong file type: must choose an audio file!");
+		console.error("Wrong file type: must choose an audio file!");
 		return;
 	}
 
 	let formData = new FormData();
-	formData.append("custom_audio", fileInput.elt.files[0]);
+	formData.append("custom_audio", file.file);  // LMFAO
 
 	// Send the formData in a POST request to multer at /uploads
 	await fetch("/uploads", {
@@ -136,10 +133,7 @@ function setup() {
 
 	// Create the form elements for uploading audio files
 	let form = createDiv();
-	fileInput = createFileInput((file) => {
-		if (file.type !== "audio")
-			console.error("Wrong file type: must choose an audio file!");
-	});
+	fileInput = createFileInput(submitForm);
 	fileInput.attribute("name", "custom_audio");
 	submitButton = createButton("Submit");
 	submitButton.attribute("type", "submit");
