@@ -17,7 +17,6 @@ let toggleDbgBtn;
 let cycleVisBtn;
 let currVis;
 let fileInput;
-let submitButton;
 let sndSelect;
 
 /***************************
@@ -81,7 +80,6 @@ function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	toggleDbgBtn.position(0, 0);
 	cycleVisBtn.position(width - cycleVisBtn.width, 0);
-	submitButton.position(fileInput.width + 128, 0);
 	fileInput.position(toggleDbgBtn.width, 0);
 	sndSelect.position(0, toggleDbgBtn.height);
 }
@@ -135,21 +133,14 @@ function setup() {
 	let form = createDiv();
 	fileInput = createFileInput(submitForm);
 	fileInput.attribute("name", "custom_audio");
-	submitButton = createButton("Submit");
-	submitButton.attribute("type", "submit");
-	submitButton.mousePressed(submitForm);
 
-	// Append the form elements to the form div
 	form.child(fileInput);
-	form.child(submitButton);
 
 	// Set the form attributes
 	form.attribute("action", "/uploads");
 	form.attribute("method", "post");
 	form.attribute("enctype", "multipart/form-data");
 
-	// Position form elements correctly (padded to the right of debug toggle)
-	submitButton.position(fileInput.width + 128, 0);
 	fileInput.position(toggleDbgBtn.width, 0);
 }
 
