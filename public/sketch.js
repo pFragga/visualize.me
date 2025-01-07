@@ -1,5 +1,12 @@
 "use strict"
 
+// Sound files the server already knows about
+const sndFiles = [
+	"extraordinary-idea-medium-258779.mp3",
+	"cool-driver-254248.mp3",
+	"level-vii-short-258782.mp3",
+	"music-for-arcade-style-game-146875.mp3"
+];
 const fftSmooth = .8;  // Smoothing applied to frequency specturm
 const fftSz     = 32;  // "bins": The length of resulting array
 let __debug__;
@@ -11,7 +18,7 @@ let cycleVisBtn;
 let currVis;
 let fileInput;
 let submitButton;
-let sndFilename = "assets/songs/level-vii-short-258782.mp3";
+let sndSelect;
 
 /***************************
  * Custom/helper functions *
@@ -24,12 +31,14 @@ function getDebugInfo() {
 	);
 }
 
-async function reloadSnd(filename) {
-	if (snd.isPlaying)
+async function reloadSnd(assetDir, filename) {
+	if (snd.isPlaying())
 		snd.stop();
 
+	// FIXME: Correct assetDir if trailing "/" is missing
+
 	// This is so fucking broken, but at least it works!!
-	snd = loadSound("assets/uploads/" + filename, () => {
+	snd = loadSound(assetDir + filename, () => {
 		alert("Reloaded audio!");
 		amp.setInput(snd);
 		fft.setInput(snd);
@@ -60,7 +69,7 @@ async function submitForm() {
 			console.log(resData.msg);
 
 			// Immediately try to change the audio that's currently playing
-			reloadSnd(resData.filename)
+			reloadSnd("assets/uploads/", resData.filename)
 		} else {
 			console.error(resData.msg);
 		}
@@ -77,10 +86,11 @@ function windowResized() {
 	cycleVisBtn.position(width - cycleVisBtn.width, 0);
 	submitButton.position(fileInput.width + 128, 0);
 	fileInput.position(toggleDbgBtn.width, 0);
+	sndSelect.position(0, toggleDbgBtn.height);
 }
 
 function preload() {
-	snd = loadSound(sndFilename);
+	snd = loadSound("assets/songs/" + sndFiles[0]);
 }
 
 function setup() {
@@ -104,6 +114,16 @@ function setup() {
 		// console.log("Current visualizer:\t" + currVis);
 	});
 	currVis = 0;
+
+	sndSelect = createSelect();
+	sndSelect.position(0, toggleDbgBtn.height);
+	sndSelect.changed(() => {
+		reloadSnd("assets/songs/", sndSelect.value());
+	});
+
+	// Add each known sound file as an option 
+	for (let sndFile of sndFiles)
+		sndSelect.option(sndFile);
 
 	amp = new p5.Amplitude();
 	amp.setInput(snd);
