@@ -156,8 +156,10 @@ function draw() {
 		let colw = width / fftSz;
 		for (let i = 0; i < fspec.length; ++i) {
 			let y = map(fspec[i], 0, 255, height, height / 4);
+			fill(255);
 			rect(i * colw, y, colw, height);
 			if (__debug__) {
+				fill(0);
 				text(i + 1,	// don't start at 0
 					i * colw,	// draw above the rectangles
 					y - 5);		// add some padding
@@ -170,9 +172,12 @@ function draw() {
 		let scaling = 500;
 		let vol = map(amp.getLevel(), 0, 1, 0, scaling);
 		let centerxy = [width / 2, height / 2];
+		fill(255);
 		ellipse(centerxy[0], centerxy[1], vol, vol);
-		if (__debug__)
+		if (__debug__) {
+			fill(0);
 			text(vol + "\n[x" + scaling + "]", centerxy[0], centerxy[1]);
+		}
 		break;
 
 	default:
@@ -181,13 +186,13 @@ function draw() {
 		strokeWeight(3);
 		noFill();  // Don't fill the area under the curve
 		beginShape();
-		for (let i = 0; i < wav.length; ++i){
+		for (let i = 0; i < wav.length; ++i) {
 			let x = map(i, 0, wav.length, 0, width);
 			let y = map(wav[i], -1, 1, 0, height);
 			curveVertex(x, y);
+			// TODO: draw debug info for curve
 		}
 		endShape();
-		fill(255, 255);  // FIXME: This messes up text in debug mode
 		strokeWeight(1);
 		break;
 	}
