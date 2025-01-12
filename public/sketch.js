@@ -20,6 +20,7 @@ let sndSelect;
 let colR;
 let colG;
 let colB;
+let imgBg;
 
 /***************************
  * Custom/helper functions *
@@ -116,6 +117,7 @@ function windowResized() {
 
 function preload() {
 	snd = loadSound("assets/songs/" + sndFiles[0]);
+	imgBg = loadImage("assets/images/bg.jpg");
 }
 
 function setup() {
@@ -170,7 +172,7 @@ function setup() {
 }
 
 function draw() {
-	background(220);
+	background(imgBg);
 
 	// Draw the indicator responsively based on the canvas' width
 	if (width > 800) {
