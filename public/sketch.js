@@ -11,16 +11,16 @@ const fftSmooth = .6;    // Smoothing applied to frequency specturm
 const fftSz     = 1024;  // "bins": The length of resulting array
 const __debug__ = false;
 let amp;
-let snd;
-let fft;
-let cycleVisBtn;
-let currVis;
-let fileInput;
-let sndSelect;
-let colR;
-let colG;
 let colB;
+let colG;
+let colR;
+let currVis;
+let cycleVisBtn;
+let fft;
+let fileInput;
 let imgBg;
+let snd;
+let sndSelect;
 
 /***************************
  * Custom/helper functions *
@@ -121,11 +121,14 @@ function preload() {
 }
 
 function setup() {
+	frameRate(24);
+
 	let cnv = createCanvas(windowWidth, windowHeight);
 	cnv.mousePressed(() => {
 		snd.isPlaying() ? snd.pause() : snd.play();
 	});
 
+	// TODO: "Focus Mode" for hiding buttons etc. (most elements support .hide())
 
 	cycleVisBtn = createButton("Cycle Visualizer");
 	cycleVisBtn.position(width - cycleVisBtn.width, 0);
