@@ -7,8 +7,8 @@ const sndFiles = [
 	"level-vii-short-258782.mp3",
 	"music-for-arcade-style-game-146875.mp3"
 ];
-const fftSmooth = .8;  // Smoothing applied to frequency specturm
-const fftSz     = 32;  // "bins": The length of resulting array
+const fftSmooth = .6;    // Smoothing applied to frequency specturm
+const fftSz     = 1024;  // "bins": The length of resulting array
 const __debug__ = false;
 let amp;
 let snd;
@@ -204,11 +204,9 @@ function draw() {
 		strokeWeight(3);
 		noFill();  // Don't fill the area under the curve
 		beginShape();
-		for (let i = 0; i < wav.length; ++i) {
-			let x = map(i, 0, wav.length, 0, width);
-			let y = map(wav[i], -1, 1, 0, height);
-			curveVertex(x, y);
-			// TODO: draw debug info for curve
+		for (let i = 0; i < width; ++i) {
+			let idx = floor(map(i, 0, width, 0, wav.length));
+			curveVertex(i, wav[idx] * 300 + height / 2);
 		}
 		endShape();
 		strokeWeight(1);
