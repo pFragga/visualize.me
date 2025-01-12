@@ -17,10 +17,28 @@ let cycleVisBtn;
 let currVis;
 let fileInput;
 let sndSelect;
+let colR;
+let colG;
+let colB;
 
 /***************************
  * Custom/helper functions *
  ***************************/
+
+/*
+ * Used to determine what color fill/stroke/etc should use, provided the call
+ * to those functions use the variables colR, colG, colB.
+ *
+ * To get that rainbow effect, we have to go back and forth on the entire color
+ * spectrum.  So we need 3 distinct periodic functions and map their values into
+ * [0, 255].
+ */
+function colorMyPencils() {
+	let x = frameCount * .01;  // Downscale
+	colR = map(sin(x), -1, 1, 0, 255);
+	colG = map(cos(x), -1, 1, 0, 255);
+	colB = map(sin(x + 10), -1, 1, 0, 255); // sin, but shifted to the left
+}
 
 /*
  * Draw an indicator at the top of the canvas displaying the "mode" we're in
@@ -147,6 +165,8 @@ function setup() {
 	form.attribute("enctype", "multipart/form-data");
 
 	fileInput.position(0, sndSelect.height);
+
+	colorMyPencils();  // Initialize RGB color variables
 }
 
 function draw() {
@@ -167,6 +187,10 @@ function draw() {
 		drawIndicator();
 	}
 
+	// Update colors, gives rainbow effect over time
+	if (snd.isPlaying())
+		colorMyPencils();
+
 	switch (currVis) {
 	case 1:
 		/* Visualize frequency spectrum using horizontal rectangular bars. */
@@ -174,14 +198,8 @@ function draw() {
 		let colw = width / fftSz;
 		for (let i = 0; i < fspec.length; ++i) {
 			let y = map(fspec[i], 0, 255, height, height / 4);
-			fill(255);
-			rect(i * colw, y, colw, height);
-			if (__debug__) {
-				fill(0);
-				text(i + 1,	// don't start at 0
-					i * colw,	// draw above the rectangles
-					y - 5);		// add some padding
-			}
+			stroke(colR, colG, colB);
+			line(i * colw, height, i * colw, y);
 		}
 		break;
 
@@ -189,18 +207,17 @@ function draw() {
 		/* Visualize amplitude using a circle centered in the canvas. */
 		let scaling = 500;
 		let vol = map(amp.getLevel(), 0, 1, 0, scaling);
-		let centerxy = [width / 2, height / 2];
-		fill(255);
-		ellipse(centerxy[0], centerxy[1], vol, vol);
-		if (__debug__) {
-			fill(0);
-			text(vol + "\n[x" + scaling + "]", centerxy[0], centerxy[1]);
-		}
+		fill(colR, colG, colB);
+		ellipse(width / 2, height / 2, vol, vol);
+		if (__debug__)
+			text(vol + "\n[x" + scaling + "]", width / 2, height / 2);
+
 		break;
 
 	default:
 		/* Linear interpolation on sample values. */
 		let wav = fft.waveform();
+		stroke(colR, colG, colB);
 		strokeWeight(3);
 		noFill();  // Don't fill the area under the curve
 		beginShape();
