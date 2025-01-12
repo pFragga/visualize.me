@@ -23,6 +23,26 @@ let sndSelect;
  ***************************/
 
 /*
+ * Draw an indicator at the top of the canvas displaying the "mode" we're in
+ * (similar to Vim's showmode).
+ */
+function drawIndicator() {
+	let desc;
+	switch (currVis) {
+	case 1:
+		desc = "Frequency spectrum";
+		break;
+	case 2:
+		desc = "Amplitude";
+		break;
+	default:
+		desc = "Waveform";
+		break;
+	}
+	text("-- " + desc + " --", width / 2, 30);
+}
+
+/*
  * Stop the currenly playing audio and load a new one at the provided path.
  */
 async function reloadSnd(path) {
@@ -132,7 +152,20 @@ function setup() {
 function draw() {
 	background(220);
 
-	// TODO: Display WHAT we are visualizing each time
+	// Draw the indicator responsively based on the canvas' width
+	if (width > 800) {
+		fill(255);
+		textAlign(CENTER);
+		textFont("monospace");
+		stroke(0);
+
+		if (width < 1200)
+			textSize(18);
+		else
+			textSize(24);
+
+		drawIndicator();
+	}
 
 	switch (currVis) {
 	case 1:
