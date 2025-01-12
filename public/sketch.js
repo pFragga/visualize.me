@@ -9,11 +9,10 @@ const sndFiles = [
 ];
 const fftSmooth = .8;  // Smoothing applied to frequency specturm
 const fftSz     = 32;  // "bins": The length of resulting array
-let __debug__;
+const __debug__ = false;
 let amp;
 let snd;
 let fft;
-let toggleDbgBtn;
 let cycleVisBtn;
 let currVis;
 let fileInput;
@@ -22,13 +21,6 @@ let sndSelect;
 /***************************
  * Custom/helper functions *
  ***************************/
-
-function getDebugInfo() {
-	console.log("Freq specturm:\t", fft.analyze(),
-		"\nWaveform:\t", fft.waveform(),
-		"\nAmp level:\t", amp.getLevel()
-	);
-}
 
 async function reloadSnd(assetDir, filename) {
 	if (snd.isPlaying())
@@ -78,10 +70,9 @@ async function submitForm(file) {
 
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
-	toggleDbgBtn.position(0, 0);
 	cycleVisBtn.position(width - cycleVisBtn.width, 0);
-	fileInput.position(toggleDbgBtn.width, 0);
-	sndSelect.position(0, toggleDbgBtn.height);
+	sndSelect.position(0, 0);
+	fileInput.position(0, sndSelect.height);
 }
 
 function preload() {
@@ -94,13 +85,6 @@ function setup() {
 		snd.isPlaying() ? snd.pause() : snd.play();
 	});
 
-	toggleDbgBtn = createButton("Toggle debug");
-	toggleDbgBtn.position(0, 0);
-	toggleDbgBtn.mousePressed(() => {
-		__debug__ = !__debug__;
-		// console.log("Debug mode: ", __debug__ ? 1 : 0);
-	});
-	__debug__ = true;  // NOTE: Turn this off in release version
 
 	cycleVisBtn = createButton("Cycle Visualizer");
 	cycleVisBtn.position(width - cycleVisBtn.width, 0);
@@ -111,7 +95,7 @@ function setup() {
 	currVis = 0;
 
 	sndSelect = createSelect();
-	sndSelect.position(0, toggleDbgBtn.height);
+	sndSelect.position(0, 0);
 	sndSelect.changed(() => {
 		reloadSnd("assets/songs/", sndSelect.value());
 	});
@@ -141,7 +125,7 @@ function setup() {
 	form.attribute("method", "post");
 	form.attribute("enctype", "multipart/form-data");
 
-	fileInput.position(toggleDbgBtn.width, 0);
+	fileInput.position(0, sndSelect.height);
 }
 
 function draw() {
