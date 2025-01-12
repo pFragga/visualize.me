@@ -14,3 +14,7 @@ footer {
 canvas {
 	display: block;
 }
+
+input {
+	color: #eeeeee;
+}
