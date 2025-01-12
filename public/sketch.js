@@ -22,14 +22,15 @@ let sndSelect;
  * Custom/helper functions *
  ***************************/
 
-async function reloadSnd(assetDir, filename) {
+/*
+ * Stop the currenly playing audio and load a new one at the provided path.
+ */
+async function reloadSnd(path) {
 	if (snd.isPlaying())
 		snd.stop();
 
-	// FIXME: Correct assetDir if trailing "/" is missing
-
 	// This is so fucking broken, but at least it works!!
-	snd = loadSound(assetDir + filename, () => {
+	snd = loadSound(path, () => {
 		alert("Reloaded audio!");
 		amp.setInput(snd);
 		fft.setInput(snd);
@@ -57,7 +58,7 @@ async function submitForm(file) {
 			console.log(resData.msg);
 
 			// Immediately try to change the audio that's currently playing
-			reloadSnd("assets/uploads/", resData.filename)
+			reloadSnd("assets/uploads/" + resData.filename)
 		} else {
 			console.error(resData.msg);
 		}
@@ -97,7 +98,7 @@ function setup() {
 	sndSelect = createSelect();
 	sndSelect.position(0, 0);
 	sndSelect.changed(() => {
-		reloadSnd("assets/songs/", sndSelect.value());
+		reloadSnd("assets/songs/" + sndSelect.value());
 	});
 
 	// Add each known sound file as an option 
