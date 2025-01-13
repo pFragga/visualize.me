@@ -198,18 +198,18 @@ function draw() {
 
 	switch (currVis) {
 	case 1:
-		/* Visualize frequency spectrum using horizontal rectangular bars. */
+		/* Frequency spectrum as vertical bars. */
 		let fspec = fft.analyze();
 		let colw = width / fftSz;
+		stroke(colR, colG, colB);
 		for (let i = 0; i < fspec.length; ++i) {
 			let y = map(fspec[i], 0, 255, height, height / 4);
-			stroke(colR, colG, colB);
 			line(i * colw, height, i * colw, y);
 		}
 		break;
 
 	case 2:
-		/* Visualize amplitude using a circle centered in the canvas. */
+		/* Amplitude as a circle. */
 		let scaling = 500;
 		let vol = map(amp.getLevel(), 0, 1, 0, scaling);
 		fill(colR, colG, colB);
