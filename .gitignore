@@ -1,4 +1,4 @@
 # For obvious reasons...
 node_modules/
 
-*.old
+public/assets/uploads/
