@@ -7,7 +7,7 @@
     "nodemon": "^3.1.7"
   },
   "scripts": {
-    "start": "rm -f public/assets/uploads/*; node index.js",
-    "debug": "rm -f public/assets/uploads/*; nodemon index.js"
+    "start": "node index.js",
+    "debug": "nodemon index.js"
   }
 }

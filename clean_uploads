@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -eu
+
+# No need to error check cd, since we use set -e
+uploads_dir=./public/assets/uploads
+cd "$uploads_dir"
+
+printf "Cleaning up '%s'... " "$uploads_dir" >&2
+for f in ./*; do
+	if [ "$f" != ./README ]; then
+		rm -f "$f"
+	fi
+done
+unset -v f
+printf 'done.\n' >&2
+
+exit $?
